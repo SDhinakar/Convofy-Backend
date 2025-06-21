@@ -55,7 +55,7 @@ export const login = async (req, res) => {
             fullName: user.fullName,
             email: user.email,
             profilePic: user.profilePic,
-              createdAt: user.createdAt, // ✅ include this
+            createdAt: user.createdAt, // ✅ include this
             message: "User logged in successfully"
         });
 
@@ -82,15 +82,28 @@ export const updateProfile = async (req, res) => {
         const { profilePic } = req.body;
         if (!profilePic) return res.status(400).json({ message: "Profile picture is required" });
 
-        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+        // Log base64 length to debug size issues
+        console.log("Base64 Length:", profilePic.length);
+
+        // Upload to Cloudinary from base64
+        const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+            folder: "profile_pics",
+        });
         const updatedUser = await User.findByIdAndUpdate(
             userId,
             { profilePic: uploadResponse.secure_url },
             { new: true }
         );
-        res.status(200).json(updatedUser);
+        res.status(200).json({
+            _id: updatedUser._id,
+            fullName: updatedUser.fullName,
+            email: updatedUser.email,
+            profilePic: updatedUser.profilePic,
+            createdAt: updatedUser.createdAt,
+            message: "Profile updated successfully",
+        });
     } catch (error) {
-        console.log("Error in updateProfile controller ", error.message);
+        console.log("Error in updateProfile controller ", error);
         res.status(500).json({ message: "Internal server error" });
     }
 }
