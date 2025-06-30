@@ -43,6 +43,11 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
+// Public health check route for keep-alive pings
+app.get('/api/ping', (req, res) => {
+  res.status(200).json({ message: 'pong' });
+});
+
 // Serve Frontend in Production
 if (process.env.NODE_ENV === "production") {
   const distPath = join(__dirname, "../Frontend/dist");
@@ -59,7 +64,6 @@ if (process.env.NODE_ENV === "production") {
     console.warn("⚠️ Frontend build not found in production mode.");
   }
 }
-
 
 // Start server
 server.listen(PORT, () => {
