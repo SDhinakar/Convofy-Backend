@@ -45,8 +45,10 @@ app.use("/api/messages", messageRoutes);
 
 // Public health check route for keep-alive pings
 app.get('/api/ping', (req, res) => {
+  console.log("✅ /api/ping hit");
   res.status(200).json({ message: 'pong' });
 });
+
 
 
 // Serve Frontend in Production
